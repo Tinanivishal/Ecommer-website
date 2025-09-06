@@ -1,0 +1,49 @@
+{
+    "AWSTemplateFormatVersion" : "2010-09-09",
+    "Description" :"Create EC2 Instance",
+    "Resources":{
+         "Myinstance":{
+
+            "Type" : "AWS::EC2::Instance",
+            "Properties" : {
+
+                 "ImageId": "ami-0861f4e788f5069dd",
+                 "InstanceType":"t2.micro",
+                "KeyName" : "Demo-cft-key",
+                "SecurityGroupIds":  [{
+                    "Ref" : "Mysg"
+                }],
+                "SubnetId":"subnet-037c762b4583d5cb4",
+                "BlockDeviceMappings":[
+                    {
+                        "DeviceName":"/dev/xvdf",
+                         "Ebs":{
+                            "VolumeSize" : 10,
+                            "VolumeType" : "gp3"
+                         }
+                    }
+                ]
+
+
+            }
+         },
+         "Mysg":{
+
+              "Type" : "AWS::EC2::SecurityGroup",
+              "Properties" :{
+                "GroupDescription" : "Allow ssh",
+                   "SecurityGroupIngress" : [
+                    {
+                        "CidrIp" : "0.0.0.0/0",
+                        "FromPort" : 22,
+                        "ToPort" : 22,
+                        "IpProtocol" : "tcp"
+                    }
+                   ],
+                   "VpcId":"vpc-0431c4417e6d2bd6e"
+
+              }
+         }
+
+    }
+}

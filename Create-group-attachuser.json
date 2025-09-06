@@ -1,0 +1,23 @@
+{
+    "AWSTemplateFormatVersion" : "2010-09-09",
+    "Description":"First project for creating iam user in cft",
+    "Resources":{
+    "MyIAMuser":{
+        "Type" : "AWS::IAM::User",
+         "Properties" :{
+             "UserName" : "demo-User",
+              "Groups" : [
+              {"Ref":"MyownGroup"}
+              ]
+         }
+    },
+    "MyownGroup":{
+        "Type" : "AWS::IAM::Group",
+         "Properties" : {
+             "GroupName" :"Demo-group",
+             "ManagedPolicyArns":"arn:aws:iam::aws:policy/AdministratorAccess"
+
+         }
+    }
+    }
+}

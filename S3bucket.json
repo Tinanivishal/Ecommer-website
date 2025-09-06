@@ -1,0 +1,44 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "First project for creating group",
+    "Resources": {
+        "Mybucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+                "BucketName": "mac123plndemo",
+                "VersioningConfiguration": {
+                    "Status":"Enabled"
+                },
+                "PublicAccessBlockConfiguration": {
+                    "BlockPublicAcls": false,
+                    "BlockPublicPolicy": false,
+                    "IgnorePublicAcls": false,
+                    "RestrictPublicBuckets": false
+                }
+            }
+        },
+        "Mybucketpolicy": {
+            "Type": "AWS::S3::BucketPolicy",
+            "Properties": {
+                "Bucket": {
+                    "Ref": "Mybucket"
+                },
+               
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Sid": "Statement1",
+                            "Effect": "Allow",
+                            "Principal": "*",
+                            "Action": "s3:*",
+                            "Resource": {
+                                "Fn::Sub": "arn:aws:s3:::${Mybucket}/*"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

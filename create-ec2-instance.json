@@ -1,0 +1,44 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "EC2 instance in default VPC with new KeyPair and Security Group",
+    "Resources": {
+        "Mysg": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "VpcId": "vpc-0431c4417e6d2bd6e",
+                "GroupDescription": "Allow SSH access",
+                "SecurityGroupIngress": [
+                    {
+                        "CidrIp": "0.0.0.0/0",
+                        "FromPort": 22,
+                        "ToPort": 22,
+                        "IpProtocol": "tcp"
+                    }
+                ]
+            }
+        },
+        "Myinstance": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "ImageId": "ami-0861f4e788f5069dd",
+                "InstanceType": "t2.micro",
+                "KeyName": "cft-key",
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "Mysg"
+                    }
+                ],
+                "SubnetId": "subnet-037c762b4583d5cb4",
+                "BlockDeviceMappings": [
+                    {
+                        "DeviceName": "/dev/xvda",
+                        "Ebs": {
+                            "VolumeSize": 10,
+                            "VolumeType": "gp3"
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

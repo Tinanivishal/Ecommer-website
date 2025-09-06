@@ -1,0 +1,136 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Create an Alb in default VPC with new Security Group",
+    "Resources": {
+        "Myinstance": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "ImageId": "ami-02d26659fd82cf299",
+                "InstanceType": "t2.micro",
+                "KeyName": "cft-key",
+                "SubnetId": "subnet-037c762b4583d5cb4",
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "Mysginstance"
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "Myinstance"
+                    }
+                ]
+            }
+        },
+        "Myinstance2": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "ImageId": "ami-02d26659fd82cf299",
+                "InstanceType": "t2.micro",
+                "KeyName": "cft-key",
+                "SubnetId": "subnet-037c762b4583d5cb4",
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "Mysginstance"
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "Myinstance2"
+                    }
+                ]
+            }
+        },
+        "Mysginstance": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Allow HTTP and SSH access",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": 80,
+                        "ToPort": 80,
+                        "CidrIp": "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": 22,
+                        "ToPort": 22,
+                        "CidrIp": "0.0.0.0/0"
+                    }
+                ],
+                "VpcId": "vpc-0431c4417e6d2bd6e"
+            }
+        },
+        "Myalb": {
+            "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+            "Properties": {
+                "Name": "Myalb",
+                "Subnets": [
+                    "subnet-037c762b4583d5cb4",
+                    "subnet-01f6d6ee8a8055c4b",
+                    "subnet-0a3640bc9c4cc46d1"
+                ],
+                "SecurityGroups": [
+                    {
+                        "Ref": "Mysginstance"
+                    }
+                ],
+                "Type": "application",
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "Myalb"
+                    }
+                ]
+            }
+        },
+        "Mytargetgroup": {
+            "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+            "Properties": {
+                "Name": "mytargetgroup",
+                "Port": 80,
+                "Protocol": "HTTP",
+                "VpcId": "vpc-0431c4417e6d2bd6e",
+                "Targets": [
+                    {
+                        "Id": {
+                            "Ref": "Myinstance"
+                        },
+                        "Port": 80
+                    },
+                    {
+                        "Id": {
+                            "Ref": "Myinstance2"
+                        },
+                        "Port": 80
+                    }
+                ]
+            }
+        },
+        "MyListener": {
+            "Type": "AWS::ElasticLoadBalancingV2::Listener",
+            "Properties": {
+                "DefaultActions": [
+                    {
+                        "ForwardConfig": {
+                            "TargetGroups": [
+                                {
+                                    "TargetGroupArn": {
+                                        "Ref": "Mytargetgroup"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "LoadBalancerArn": {
+                    "Ref": "Myalb"
+                },
+                "Port": 80,
+                "Protocol": "HTTP"
+            }
+        }
+    }
+}
